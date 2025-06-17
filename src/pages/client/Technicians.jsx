@@ -13,15 +13,32 @@ import {
   Spinner,
   NativeSelect,
   Center,
+  InputGroup,
+  Kbd,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { useDebounce } from '../../hooks/useDebounce' // optional custom hook for smoother search
 import { useTechnicians } from '../../providers/TechnicianProvider'
+import { useAuth } from '../../providers/AuthProvider'
+import { getDistance } from 'geolib'
 
 export default function Technicians() {
-  const { filteredTechnicians, loading, search, setSearch, filter, setFilter} = useTechnicians();
+  const { filteredTechnicians, loading, search, setSearch, userLocation, setUserLocation, filter, setFilter, nearbySearch, setNearbySearch, searchRaduis, setSearchRadius} = useTechnicians();
+  const [] = useState(false);
+
+  const handleSearchNearby = () => {
+    setNearbySearch(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const coords = pos.coords;
+        setUserLocation({latitude: coords.latitude, longitude: coords.longitude });
+      },
+      (err) => alert("Error getting location"),
+      {enableHighAccuracy: true}
+    )
+  }
 
   return (
     <Box p={4} maxW={1200} w='full'>
@@ -43,6 +60,22 @@ export default function Technicians() {
           {/* Add other services as needed */}
           </NativeSelect.Field>
         </NativeSelect.Root>
+
+      </HStack>
+
+      <HStack mb={4} spacing={4}>
+        <InputGroup endElement={'(km)'} maxW="300px">
+          <Input 
+          placeholder='Search Radius'
+          value={searchRaduis}
+          type='number'
+          min={1}
+          onChange={e => setSearchRadius(e.target.value)}
+        />
+        </InputGroup>
+
+        <Button onClick={handleSearchNearby}>Search Nearby</Button>
+        <Button onClick={() => setNearbySearch(false)} variant='plain' disabled={!nearbySearch}>Clear</Button>
       </HStack>
 
       {loading ? (
@@ -52,7 +85,7 @@ export default function Technicians() {
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} gap={2} justifyContent='center'>
           {filteredTechnicians.map(tech => (
-            <TechCard key={tech.id} tech={tech} />
+            <TechCard key={tech.id} tech={tech} userLocation={userLocation} showDistance={nearbySearch}/>
           ))}
         </SimpleGrid>
       )}
@@ -60,8 +93,16 @@ export default function Technicians() {
   )
 }
 
-const TechCard = ({ tech }) => {
+const TechCard = ({ tech, showDistance, userLocation }) => {
   const profile = tech.technicianProfile;
+  const techLocation = profile?.location;
+
+  let distanceKm = null;
+  if(showDistance && userLocation && techLocation) {
+    const distance = getDistance(userLocation, techLocation);
+    distanceKm = (distance / 1000).toFixed(1);
+  }
+
   return (
     <Box borderWidth="1px" borderRadius="xl" p={4} shadow="sm">
       <HStack spacing={4}>
@@ -78,6 +119,11 @@ const TechCard = ({ tech }) => {
             {profile?.availability ? 'Available' : 'Unavailable'}
           </Tag.Label>
           </Tag.Root>
+          {
+            distanceKm && (<Text fontSize='sm' color='brand.600'>
+              {distanceKm} km away
+            </Text>)
+          }
         </VStack>
       </HStack>
 

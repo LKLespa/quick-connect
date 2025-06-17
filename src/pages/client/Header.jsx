@@ -5,6 +5,7 @@ import Logo from '../../components/widgets/Logo'
 import { routeLinks } from '../../routes'
 import { useAuth } from '../../providers/AuthProvider'
 import { BiHistory, BiHome, BiMenu, BiMessage, BiUser } from 'react-icons/bi'
+import { ColorModeButton } from '../../components/ui/color-mode'
 
 export default function ClientHeader() {
     const { userData } = useAuth();
@@ -23,21 +24,19 @@ export default function ClientHeader() {
                     <NavLinks />
                 </Box>
 
-                <IconButton size='md' aria-label='Open Menu' display={{ base: 'flex', lg: 'none' }} onClick={() => setOpenDrawer(true)}>
-                    <BiMenu />
-                </IconButton>
-
                 <SideDrawer open={openDrawer} setOpen={setOpenDrawer} userData={userData}/>
 
-                <Box
-                    as={Link}
-                    to={routeLinks.clientProfile}
-                >
-                    <Avatar.Root display={{base: 'none', lg: 'flex'}}>
+                <HStack>
+                    <ColorModeButton />
+                    <Avatar.Root as={Link}  to={routeLinks.clientProfile}  display={{base: 'none', lg: 'flex'}}>
                         <Avatar.Fallback name={userData?.fullName} />
                         <Avatar.Image src={userData?.photoUrl} />
                     </Avatar.Root>
-                </Box>
+                </HStack>
+
+                <IconButton size='md' aria-label='Open Menu' display={{ base: 'flex', lg: 'none' }} onClick={() => setOpenDrawer(true)}>
+                    <BiMenu />
+                </IconButton>
             </Flex>
             <Outlet />
         </VStack>
