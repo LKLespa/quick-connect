@@ -15,6 +15,7 @@ import {
   Center,
   InputGroup,
   Kbd,
+  Flex,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { collection, getDocs, query, where } from 'firebase/firestore'
@@ -23,28 +24,25 @@ import { useDebounce } from '../../hooks/useDebounce' // optional custom hook fo
 import { useTechnicians } from '../../providers/TechnicianProvider'
 import { useAuth } from '../../providers/AuthProvider'
 import { getDistance } from 'geolib'
+import { BiMap } from 'react-icons/bi'
+import DialogWidget from '../../components/widgets/DialogWidget'
+import TechnicianMap from '../../components/TechnicianMap'
 
 export default function Technicians() {
-  const { filteredTechnicians, loading, search, setSearch, userLocation, setUserLocation, filter, setFilter, nearbySearch, setNearbySearch, searchRaduis, setSearchRadius} = useTechnicians();
-  const [] = useState(false);
+  const { filteredTechnicians, loading, search, setSearch, filter, setFilter, nearbySearch, setNearbySearch, searchRaduis, setSearchRadius} = useTechnicians();
+  const {userLocation} = useAuth();
+  const [showMap, setShowMap] = useState(false);
 
   const handleSearchNearby = () => {
     setNearbySearch(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const coords = pos.coords;
-        setUserLocation({latitude: coords.latitude, longitude: coords.longitude });
-      },
-      (err) => alert("Error getting location"),
-      {enableHighAccuracy: true}
-    )
   }
 
   return (
     <Box p={4} maxW={1200} w='full'>
       <Heading size="md" mb={4}>Browse Technicians</Heading>
 
-      <HStack mb={4} spacing={4}>
+      <Flex flexWrap='wrap' justifyContent='space-between' mb={5}>
+            <HStack mb={4} spacing={4}>
         <Input
           placeholder="Search by name..."
           value={search}
@@ -60,7 +58,6 @@ export default function Technicians() {
           {/* Add other services as needed */}
           </NativeSelect.Field>
         </NativeSelect.Root>
-
       </HStack>
 
       <HStack mb={4} spacing={4}>
@@ -74,9 +71,16 @@ export default function Technicians() {
         />
         </InputGroup>
 
-        <Button onClick={handleSearchNearby}>Search Nearby</Button>
-        <Button onClick={() => setNearbySearch(false)} variant='plain' disabled={!nearbySearch}>Clear</Button>
+        <Button variant='outline' onClick={handleSearchNearby}>Search Nearby</Button>
+        <Button  onClick={() => setNearbySearch(false)} variant='plain' disabled={!nearbySearch}>Clear</Button>
       </HStack>
+
+      <Button onClick={() => setShowMap(true)}><BiMap />View Map</Button>
+      </Flex>
+
+      <DialogWidget open={showMap} setOpen={setShowMap} size='cover'>
+        <TechnicianMap />
+      </DialogWidget>
 
       {loading ? (
        <Center w='full'><Spinner size="xl" /></Center>

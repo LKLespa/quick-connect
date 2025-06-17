@@ -26,6 +26,7 @@ export const useAuth = () => useContext(AuthContext);
 
 // TODO: Handle Offline
 export const AuthProvider = ({ children }) => {
+    const [userLocation, setUserLocation] = useState();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -273,6 +274,8 @@ export const AuthProvider = ({ children }) => {
                 loading,
                 error,
                 isAuthenticated,
+                userLocation,
+                setUserLocation,
                 signUp,
                 signIn,
                 signOut,

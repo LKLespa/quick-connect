@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, CloseButton, Drawer, Flex, HStack, IconButton, Portal, Text, VStack } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, Outlet } from 'react-router'
 import Logo from '../../components/widgets/Logo'
 import { routeLinks } from '../../routes'
@@ -8,9 +8,23 @@ import { BiHistory, BiHome, BiMenu, BiMessage, BiUser } from 'react-icons/bi'
 import { ColorModeButton } from '../../components/ui/color-mode'
 
 export default function ClientHeader() {
-    const { userData } = useAuth();
+
+    const { userData, userLocation, setUserLocation } = useAuth()
 
     const [openDrawer, setOpenDrawer] = useState(false)
+
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const coords = pos.coords;
+                setUserLocation({ latitude: coords.latitude, longitude: coords.longitude });
+            },
+            (err) => alert("Error getting location"),
+            { enableHighAccuracy: true }
+        )
+
+        console.log('Location', userLocation)
+    }, [])
 
     return (
         <VStack>
@@ -20,15 +34,15 @@ export default function ClientHeader() {
                     <Text fontWeight='bold' fontSize='xl' color='brand.700'>QuickConnect</Text>
                 </HStack>
 
-                <Box display={{base: 'none', lg: 'flex'}}>
+                <Box display={{ base: 'none', lg: 'flex' }}>
                     <NavLinks />
                 </Box>
 
-                <SideDrawer open={openDrawer} setOpen={setOpenDrawer} userData={userData}/>
+                <SideDrawer open={openDrawer} setOpen={setOpenDrawer} userData={userData} />
 
                 <HStack>
                     <ColorModeButton />
-                    <Avatar.Root as={Link}  to={routeLinks.clientProfile}  display={{base: 'none', lg: 'flex'}}>
+                    <Avatar.Root as={Link} to={routeLinks.clientProfile} display={{ base: 'none', lg: 'flex' }}>
                         <Avatar.Fallback name={userData?.fullName} />
                         <Avatar.Image src={userData?.photoUrl} />
                     </Avatar.Root>
@@ -44,7 +58,7 @@ export default function ClientHeader() {
 }
 
 
-const NavLinks = ({userData}) => {
+const NavLinks = ({ userData }) => {
     const navLinks = [
         { label: "Dashboard", href: routeLinks.clientHome, icon: <BiHome /> },
         { label: "Requests", href: routeLinks.clientRequest, icon: <BiHistory /> },
@@ -53,29 +67,29 @@ const NavLinks = ({userData}) => {
     ]
 
     return (
-                <Flex justifyContent='center' alignItems='center' flexDirection={{base: 'column', lg: 'row'}} height='full'>
-                     <Avatar.Root size='xl' display={{base: 'flex', lg: 'none'}}>
-                        <Avatar.Fallback name={userData?.fullName} />
-                        <Avatar.Image src={userData?.photoUrl} />
-                    </Avatar.Root>
-                    {navLinks.map(link => (
-                        <Button
-                            key={link.label}
-                            variant='ghost'
-                            colorScheme='teal'
-                            as={Link}
-                            to={link.href}
-                            size='lg'
-                        >
-                            {link.icon}
-                            {link.label}
-                        </Button>
-                    ))}
-                </Flex>
+        <Flex justifyContent='center' alignItems='center' flexDirection={{ base: 'column', lg: 'row' }} height='full'>
+            <Avatar.Root size='xl' display={{ base: 'flex', lg: 'none' }}>
+                <Avatar.Fallback name={userData?.fullName} />
+                <Avatar.Image src={userData?.photoUrl} />
+            </Avatar.Root>
+            {navLinks.map(link => (
+                <Button
+                    key={link.label}
+                    variant='ghost'
+                    colorScheme='teal'
+                    as={Link}
+                    to={link.href}
+                    size='lg'
+                >
+                    {link.icon}
+                    {link.label}
+                </Button>
+            ))}
+        </Flex>
     )
 }
 
-const SideDrawer = ({open, setOpen, userData}) => {
+const SideDrawer = ({ open, setOpen, userData }) => {
     return (
         <Drawer.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
             <Portal>

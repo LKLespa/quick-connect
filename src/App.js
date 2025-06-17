@@ -5,6 +5,7 @@ import { Box } from "@chakra-ui/react";
 import { AuthProvider } from "./providers/AuthProvider";
 import { Toaster } from "./components/ui/toaster";
 import { TechnicianProvider } from "./providers/TechnicianProvider";
+import 'leaflet/dist/leaflet.css';
 
 function App() {
   return (

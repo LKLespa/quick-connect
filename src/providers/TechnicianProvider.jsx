@@ -12,7 +12,7 @@ const TechnicianContext = createContext()
 export const useTechnicians = () => useContext(TechnicianContext)
 
 export const TechnicianProvider = ({ children }) => {
-    const [userLocation, setUserLocation] = useState();
+    const {userLocation, setUserLocation} = useAuth();
 
     const [technicians, setTechnicians] = useState([])
     const [loading, setLoading] = useState(true)
@@ -91,8 +91,6 @@ export const TechnicianProvider = ({ children }) => {
                 searchRadius,
                 setSearchRadius,
                 filteredTechnicians,
-                userLocation,
-                setUserLocation
             }}
         >
             {children}
