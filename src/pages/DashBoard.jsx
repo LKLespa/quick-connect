@@ -4,6 +4,7 @@ import { Box, Spinner, Center } from '@chakra-ui/react';
 import ClientDashBoard from './client/DashBoard';
 import TechnicianDashBoard from './technician/DashBoard';
 import { useAuth } from '../providers/AuthProvider';
+import { routeLinks } from '../routes';
 // import { useAuth } from '../../provider/AuthProvider';
 
 
@@ -22,14 +23,23 @@ const Dashboard = () => {
   }
 
   if (!userData) {
-    navigate('/signin');
+    navigate(routeLinks.signIn);
+    return null;
+  }
+
+  if(userData.role === 'client'){
+    navigate(routeLinks.clientHome)
+    return null;
+  }
+
+    if(userData.role === 'technician'){
+    navigate(routeLinks.techHome)
     return null;
   }
 
   return (
     <Box px={{ base: 4, md: 10 }} py={6}>
-      {userData.role === 'client' && <ClientDashBoard user={userData} />}
-      {userData.role === 'technician' && <TechnicianDashBoard user={userData} />}
+      Empty
     </Box>
   );
 };

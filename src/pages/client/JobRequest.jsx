@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function JobRequests() {
+export default function ClientRequest() {
   return (
     <div>Job Requests</div>
   )

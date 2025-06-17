@@ -9,17 +9,28 @@ import Earnings from "./pages/technician/Earnings";
 import TechnicianSettingsPage from "./pages/technician/SettingsPage";
 import JobDetails from "./pages/technician/JobDetails";
 import ClientDashboard from "./pages/client/DashBoard";
-import TechProfile from "./pages/client/TechProfile";
+import TechProfile from "./pages/client/ClientProfile";
 import Technicians from "./pages/client/Technicians";
-import ClientMessages from './pages/client/Messages'
+import AllChats from './pages/shared/AllChats'
 import ClientSettings from './pages/client/SettingsPage'
 import Dashboard from "./pages/DashBoard";
+import ClientHeader from "./pages/client/Header";
+import ClientRequest from "./pages/client/JobRequest";
+import ChatRoom from "./pages/shared/ChatRoom";
+import ClientProfile from "./pages/client/ClientProfile";
 
 const routeLinks = {
     signUp: '/signup',
     signIn: '/signIn',
     setup: '/setup',
     techHome: '/technician',
+    clientHome: '/client',
+    clientRequest: '/client/requests',
+    clientHistory: '/client/history',
+    technicians: '/client/technicians',
+    clientProfile: '/client/profile',
+    clientChats: '/client/chats',
+    clientSettings: '/client/settings',
     dashboard: '/dashboard',
 }
 
@@ -52,6 +63,10 @@ const router = createBrowserRouter([
         path: '/technician',
         children: [
             {
+                path: '',
+                Component: TechnicianDashBoard,
+            },
+            {
                 path: 'myJobs',
                 Component: MyJobs,
             },
@@ -75,26 +90,39 @@ const router = createBrowserRouter([
     },
     {
         path: '/client',
+        Component: ClientHeader,
         children: [
+            {
+                path: '',
+                Component: ClientDashboard,
+            },
             {
                 path: 'technicians',
                 Component: Technicians,
             },
             {
-                path: 'technician-profile',
+                path: 'technicians/:technicianId',
                 Component: TechProfile,
             },
             {
                 path: 'requests',
-
+                Component: ClientRequest,
             },
             {
-                path: 'messages',
-                Component: ClientMessages,
+                path: 'chats',
+                Component: AllChats,
+            },
+            {
+                path: 'chats/:chatId',
+                Component: ChatRoom,
             },
             {
                 path: 'settings',
                 Component: ClientSettings,
+            },
+            {
+                path: 'profile',
+                Component: ClientProfile,
             }
         ]
     },
