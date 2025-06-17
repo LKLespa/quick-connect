@@ -15,6 +15,7 @@ import { Formik, Form, Field as FormikField } from "formik";
 import { Link, useNavigate } from "react-router";
 import { routeLinks } from "../../routes";
 import Logo from "../../components/widgets/Logo";
+import { useAuth } from "../../providers/AuthProvider";
 // import { useAuth } from "../../provider/AuthProvider";
 
 // 🔐 Yup Validation Schema
@@ -25,17 +26,17 @@ const SignInSchema = Yup.object().shape({
 
 const SignInForm = () => {
 
+  const { signIn, loading } = useAuth();
   // const { signIn, loading } = useAuth();
-  let loading = false;
   const navigate = useNavigate();
 
   const handleSubmit = (values) => {
     console.log("Handle Submit", values)
-    // signIn({
-    //   email: values.email,
-    //   password: values.password,
-    //   onDone: () => navigate(pathLinks.home)
-    // })
+    signIn({
+      email: values.email,
+      password: values.password,
+      onDone: () => navigate(routeLinks.dashboard)
+    })
   }
 
   return (

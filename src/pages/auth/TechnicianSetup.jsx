@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Input,
@@ -22,6 +22,7 @@ import Logo from "../../components/widgets/Logo";
 import { fetchAddressFromCoords } from "../../utils/geo-location";
 import { countryData } from "../../constants";
 import SelectField from "../../components/widgets/SelectField";
+import { useAuth } from "../../providers/AuthProvider";
 // import { useAuth } from "../../provider/AuthProvider";
 
 const TechnicianSetupSchema = Yup.object().shape({
@@ -67,24 +68,34 @@ const TechnicianSetupSchema = Yup.object().shape({
 
 
 const TechnicianSetup = () => {
-  // const { loading, error, signUp } = useAuth()
-  let loading = false;
+  const { isAuthenticated, setupTechnician, loading, error } = useAuth()
   const navigate = useNavigate();
   const [regions, setRegions] = useState(countryData.states);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [cities, setCities] = useState([])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(routeLinks.signUp);
+    }
+  }, [isAuthenticated])
 
   console.log('Regions', regions)
   const handleSubmit = async (values) => {
 
     console.log('Handle Submit', values)
 
-    //   signUp({email: values.email,
-    // password: values.password,
-    // fullName: values.fullName,
-    // phoneNumber: values.phone,
-    // role: values.role,
-    // onDone: () => navigate(pathLinks.home),})
+    setupTechnician({
+        services: values.otherServices,
+        location: values.locationCoordinates,
+        region: values.region,
+        city: values.city,
+        localAddress: values.locality,
+        mainService: values.mainService,
+        experienceYears: values.yearsOfService,
+        availability: true,
+        onDone: () => navigate(routeLinks.dashboard), 
+    })
   }
 
   return (
@@ -116,9 +127,7 @@ const TechnicianSetup = () => {
             locationCoordinates: null,
           }}
           validationSchema={TechnicianSetupSchema}
-          onSubmit={(values) => {
-            console.log("Technician Setup Submitted:", values);
-          }}
+          onSubmit={handleSubmit}
         >
           {({ values, errors, touched, setFieldValue }) => (
             <Form w='full'>
@@ -194,7 +203,7 @@ const TechnicianSetup = () => {
                     </Field.Root>
                   </Fieldset.Content>
 
-                    <Fieldset.Content>
+                  <Fieldset.Content>
                     <Field.Root invalid={!!errors.city && touched.city}>
                       <Field.Label>City</Field.Label>
                       <SelectField label='City' placeholder='Select City' value={values.city} onChange={(e) => setFieldValue('city', e.target.value)} disabled={!!values.locationCoordinates}>

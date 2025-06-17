@@ -17,9 +17,10 @@ import {
 import * as Yup from "yup";
 import { Form, Formik, Field as FormikField, validateYupSchema } from "formik";
 import { routeLinks } from "../../routes";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link, useParams } from "react-router";
 import Logo from "../../components/widgets/Logo";
 import { UserPhoto } from "../../assets";
+import { useAuth } from "../../providers/AuthProvider";
 // import { useAuth } from "../../provider/AuthProvider";
 
 const SignUpSchema = Yup.object().shape({
@@ -30,12 +31,11 @@ const SignUpSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Please confirm your password"),
-  role: Yup.string().oneOf(["client", "technician"]).required("Role is required"),
+  role: Yup.string().oneOf(["client", "technician"], 'Please select one of the 2 roles').required("Role is required"),
 })
 
 const SignUpForm = () => {
-  // const { loading, error, signUp } = useAuth()
-  let loading = false;
+  const { loading, error, signUp } = useAuth()
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -43,16 +43,26 @@ const SignUpForm = () => {
   const maxFileSize = 3 * 1024 * 1024; // 3MB
   const imageInputRef = useRef();
 
+  const params = useParams();
+  console.log('Params', params)
+
   const handleSubmit = async (values) => {
 
-    console.log('Handle Submit', values)
+    console.log('Handle Submit', values, profileImage)
 
-    //   signUp({email: values.email,
-    // password: values.password,
-    // fullName: values.fullName,
-    // phoneNumber: values.phone,
-    // role: values.role,
-    // onDone: () => navigate(pathLinks.home),})
+    try {
+      await signUp({
+        email: values.email,
+        password: values.password,
+        fullName: values.fullName,
+        phoneNumber: values.phone,
+        role: values.role,
+        photo: profileImage,
+        onDone: () => navigate(routeLinks.dashboard)
+      })
+    } catch (err) {
+      alert('An Error Occured')
+    }
   }
 
   return (
@@ -72,35 +82,35 @@ const SignUpForm = () => {
           Please provide your information.
         </Text>
         <Fieldset.Root>
-            <Fieldset.Content w="full">
-          <Field.Root invalid={profileError}>
-            <Field.Label>Profile Photo (Optional)</Field.Label>
+          <Fieldset.Content w="full">
+            <Field.Root invalid={profileError}>
+              <Field.Label>Profile Photo (Optional)</Field.Label>
 
-            <Input
-              type="file"
-              accept="image/*"
-              ref={imageInputRef}
-              display='none'
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (!file) return;
+              <Input
+                type="file"
+                accept="image/*"
+                ref={imageInputRef}
+                display='none'
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
 
-                if (file.size > maxFileSize) {
-                  setProfileError("File size should not exceed 3MB.");
-                  return;
-                }
+                  if (file.size > maxFileSize) {
+                    setProfileError("File size should not exceed 3MB.");
+                    return;
+                  }
 
-                setProfileImage(file);
-                setPreviewUrl(URL.createObjectURL(file));
-              }}
-            />
+                  setProfileImage(file);
+                  setPreviewUrl(URL.createObjectURL(file));
+                }}
+              />
 
               <Avatar.Root onClick={() => imageInputRef.current.click()} shape='full' width={200} height={200}>
-                <Avatar.Image src={previewUrl ?? UserPhoto} alt='Preview'/>
+                <Avatar.Image src={previewUrl ?? UserPhoto} alt='Preview' />
               </Avatar.Root>
               <Field.ErrorText>{profileError}</Field.ErrorText>
-          </Field.Root>
-        </Fieldset.Content>
+            </Field.Root>
+          </Fieldset.Content>
         </Fieldset.Root>
 
       </Stack>
@@ -115,7 +125,7 @@ const SignUpForm = () => {
             phone: "",
             password: "",
             confirmPassword: "",
-            role: "",
+            role: params?.role ?? "",
           }}
 
           validationSchema={SignUpSchema}

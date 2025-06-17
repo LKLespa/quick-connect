@@ -1,12 +1,26 @@
 import { createBrowserRouter } from "react-router";
 import { HomePage, NotFound, SettingsPage, SignInForm, SignUpForm } from "./pages";
-import ProfilePage from "./pages/dashboard/ProfilePage";
+import ProfilePage from "./pages/technician/TechnicianProfilePage";
 import TechnicianSetup from "./pages/auth/TechnicianSetup";
+import TechnicianDashBoard from "./pages/technician/DashBoard";
+import MyJobs from "./pages/technician/MyJobs";
+import TechnicianMessages from "./pages/technician/Messages";
+import Earnings from "./pages/technician/Earnings";
+import TechnicianSettingsPage from "./pages/technician/SettingsPage";
+import JobDetails from "./pages/technician/JobDetails";
+import ClientDashboard from "./pages/client/DashBoard";
+import TechProfile from "./pages/client/TechProfile";
+import Technicians from "./pages/client/Technicians";
+import ClientMessages from './pages/client/Messages'
+import ClientSettings from './pages/client/SettingsPage'
+import Dashboard from "./pages/DashBoard";
 
 const routeLinks = {
     signUp: '/signup',
-    signIn: '/auth/signIn',
-    setup: '/auth/setup',
+    signIn: '/signIn',
+    setup: '/setup',
+    techHome: '/technician',
+    dashboard: '/dashboard',
 }
 
 const router = createBrowserRouter([
@@ -15,33 +29,74 @@ const router = createBrowserRouter([
         Component: HomePage,
     },
     {
-        path: '/profile',
-        Component: ProfilePage,
+        path: '/dashboard',
+        element: <Dashboard />
     },
     {
-        path: '/settings',
-        Component: SettingsPage,
+        path: 'signin',
+        Component: SignInForm,
     },
     {
-        path: '/auth',
+        path: 'signup',
+        Component: SignUpForm,
+    },
+    {
+        path: 'signup/:role',
+        Component: SignUpForm,
+    },
+    {
+        path: 'setup',
+        Component: TechnicianSetup,
+    },
+    {
+        path: '/technician',
         children: [
             {
-                path: 'signin',
-                Component: SignInForm,
+                path: 'myJobs',
+                Component: MyJobs,
             },
             {
-                path: 'signup',
-                Component: SignUpForm,
+                path: 'job-details',
+                Component: JobDetails,
             },
             {
-                path: 'setup',
-                Component: TechnicianSetup,
+                path: 'messages',
+                Component: TechnicianMessages,
+            },
+            {
+                path: 'earnings',
+                Component: Earnings,
+            },
+            {
+                path: 'settings',
+                Component: TechnicianSettingsPage,
             }
         ]
     },
     {
-        path: routeLinks.setup,
-        Component: TechnicianSetup,
+        path: '/client',
+        children: [
+            {
+                path: 'technicians',
+                Component: Technicians,
+            },
+            {
+                path: 'technician-profile',
+                Component: TechProfile,
+            },
+            {
+                path: 'requests',
+
+            },
+            {
+                path: 'messages',
+                Component: ClientMessages,
+            },
+            {
+                path: 'settings',
+                Component: ClientSettings,
+            }
+        ]
     },
     {
         path: '*',
