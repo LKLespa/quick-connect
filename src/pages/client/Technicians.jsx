@@ -27,6 +27,9 @@ import { getDistance } from 'geolib'
 import { BiMap } from 'react-icons/bi'
 import DialogWidget from '../../components/widgets/DialogWidget'
 import TechnicianMap from '../../components/TechnicianMap'
+import TechnicianProfile from './TechnicianProfile'
+import { routeLinks } from '../../routes'
+import { Link } from 'react-router'
 
 export default function Technicians() {
   const { filteredTechnicians, loading, search, setSearch, filter, setFilter, nearbySearch, setNearbySearch, searchRaduis, setSearchRadius} = useTechnicians();
@@ -131,7 +134,7 @@ const TechCard = ({ tech, showDistance, userLocation }) => {
         </VStack>
       </HStack>
 
-      <Button mt={4} colorScheme="teal" size="sm" width="full">
+      <Button as={Link} to={`${routeLinks.technicians}/${tech.id}`} mt={4} colorScheme="teal" size="sm" width="full">
         View Profile
       </Button>
     </Box>

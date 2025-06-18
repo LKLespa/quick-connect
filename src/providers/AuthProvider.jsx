@@ -186,6 +186,8 @@ export const AuthProvider = ({ children }) => {
                 experienceYears,
                 availability,
                 updatedAt: serverTimestamp(),
+                rating: 0,
+                revuews: [],
             }
         });
 

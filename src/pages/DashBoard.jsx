@@ -27,12 +27,12 @@ const Dashboard = () => {
     return null;
   }
 
-  if(userData.role === 'client'){
+  if(userData.clientId){
     navigate(routeLinks.clientHome)
     return null;
   }
 
-    if(userData.role === 'technician'){
+  if(userData.technicianId){
     navigate(routeLinks.techHome)
     return null;
   }

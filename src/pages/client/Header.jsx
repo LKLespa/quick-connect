@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, CloseButton, Drawer, Flex, HStack, IconButton, Portal, Text, VStack } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { Link, Outlet } from 'react-router'
+import { Link, Outlet, useNavigate } from 'react-router'
 import Logo from '../../components/widgets/Logo'
 import { routeLinks } from '../../routes'
 import { useAuth } from '../../providers/AuthProvider'
@@ -9,11 +9,17 @@ import { ColorModeButton } from '../../components/ui/color-mode'
 
 export default function ClientHeader() {
 
-    const { userData, userLocation, setUserLocation } = useAuth()
+    const { userData, userLocation, setUserLocation, loading } = useAuth()
 
     const [openDrawer, setOpenDrawer] = useState(false)
+    const navigate = useNavigate();
 
     useEffect(() => {
+
+        if(!loading && !userData?.clientId){
+            navigate(routeLinks.techHome)
+        }
+
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 const coords = pos.coords;
@@ -28,7 +34,7 @@ export default function ClientHeader() {
 
     return (
         <VStack>
-            <Flex h={16} alignItems='center' justifyContent='space-between' w='full' px={4} py={3} shadow='sm' position='sticky' top={0} zIndex='1000'>
+            <Flex h={16} alignItems='center' justifyContent='space-between' w='full' px={4} py={3} shadow='sm' position='sticky' top={0} zIndex='1000' bg='background'>
                 <HStack>
                     <Logo />
                     <Text fontWeight='bold' fontSize='xl' color='brand.700'>QuickConnect</Text>
@@ -52,7 +58,9 @@ export default function ClientHeader() {
                     <BiMenu />
                 </IconButton>
             </Flex>
-            <Outlet />
+            <Flex w='full' h='calc(100vh - 90px)' justifyContent='center' overflow='auto'>
+                <Outlet />
+            </Flex>
         </VStack>
     )
 }

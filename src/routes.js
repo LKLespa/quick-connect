@@ -18,6 +18,7 @@ import ClientHeader from "./pages/client/Header";
 import ClientRequest from "./pages/client/JobRequest";
 import ChatRoom from "./pages/shared/ChatRoom";
 import ClientProfile from "./pages/client/ClientProfile";
+import TechnicianProfile from "./pages/client/TechnicianProfile";
 
 const routeLinks = {
     signUp: '/signup',
@@ -102,7 +103,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'technicians/:technicianId',
-                Component: TechProfile,
+                Component: TechnicianProfile,
             },
             {
                 path: 'requests',
@@ -113,7 +114,7 @@ const router = createBrowserRouter([
                 Component: AllChats,
             },
             {
-                path: 'chats/:chatId',
+                path: 'chats/:technicianId',
                 Component: ChatRoom,
             },
             {

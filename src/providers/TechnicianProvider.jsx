@@ -12,7 +12,8 @@ const TechnicianContext = createContext()
 export const useTechnicians = () => useContext(TechnicianContext)
 
 export const TechnicianProvider = ({ children }) => {
-    const {userLocation, setUserLocation} = useAuth();
+    const {userLocation, setUserLocation, userData} = useAuth();
+    const role = 'technician';
 
     const [technicians, setTechnicians] = useState([])
     const [loading, setLoading] = useState(true)
@@ -46,6 +47,9 @@ export const TechnicianProvider = ({ children }) => {
         const query = debouncedSearch.toLowerCase();
         const profile = tech.technicianProfile || {};
 
+        console.log('IDS', tech.fullName, userData.id == (tech?.id ?? ''))
+
+        const isNotUser = userData.id != (tech?.id ?? '');
         const nameMatch = tech.fullName?.toLowerCase().includes(query);
         const mainServiceMatch = profile.mainService?.toLowerCase().includes(query);
         const otherServicesMatch = (profile.services || []).some(service =>
@@ -70,10 +74,10 @@ export const TechnicianProvider = ({ children }) => {
             console.log('Profile Location', profile.location);
             console.log('Distance', getDistance(userLocation, profile.location))
 
-            return getDistance(userLocation, profile.location) <= (searchRadius * 1000) && searchMatch && serviceFilterMatch
+            return getDistance(userLocation, profile.location) <= (searchRadius * 1000) && searchMatch && serviceFilterMatch && isNotUser;
         }
 
-        return searchMatch && serviceFilterMatch;
+        return isNotUser && searchMatch && serviceFilterMatch;
     });
 
 

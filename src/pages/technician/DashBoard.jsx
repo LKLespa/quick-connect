@@ -21,7 +21,7 @@ const TechnicianDashboard = ({ user }) => {
 
   return (
     <Box>
-      <Heading size="lg" mb={2}>Welcome, {user.fullName ?? 'Technician'} 🛠️</Heading>
+      <Heading size="lg" mb={2}>Welcome, {userData?.fullName ?? 'Technician'} 🛠️</Heading>
       <Text color="gray.500" mb={6}>
         Your service dashboard
       </Text>
