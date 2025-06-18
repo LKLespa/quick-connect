@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -9,10 +9,21 @@ import {
   HStack,
   Stack,
 } from "@chakra-ui/react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Logo from "../components/widgets/Logo";
+import { useAuth } from "../providers/AuthProvider";
+import { routeLinks } from "../routes";
 
 const HomePage = () => {
+  const { userData, loading} = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if(!loading && userData) {
+      navigate(routeLinks.dashboard);
+    }
+  }, [userData])
+
   return (
     <Box>
       {/* Top Nav */}

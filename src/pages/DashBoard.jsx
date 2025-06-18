@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Box, Spinner, Center } from '@chakra-ui/react';
-import ClientDashBoard from './client/DashBoard';
-import TechnicianDashBoard from './technician/DashBoard';
 import { useAuth } from '../providers/AuthProvider';
 import { routeLinks } from '../routes';
-// import { useAuth } from '../../provider/AuthProvider';
-
 
 const Dashboard = () => {
   const { userData, loading } = useAuth();
-  const user = { role: 'technician' };
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (!userData) {
+      navigate(routeLinks.signIn);
+    } else if (userData.clientId) {
+      navigate(routeLinks.clientHome);
+    } else if (userData.technicianId) {
+      navigate(routeLinks.techHome);
+    }
+  }, [userData, loading, navigate]);
 
   if (loading) {
     return (
@@ -22,24 +28,9 @@ const Dashboard = () => {
     );
   }
 
-  if (!userData) {
-    navigate(routeLinks.signIn);
-    return null;
-  }
-
-  if(userData.clientId){
-    navigate(routeLinks.clientHome)
-    return null;
-  }
-
-  if(userData.technicianId){
-    navigate(routeLinks.techHome)
-    return null;
-  }
-
   return (
     <Box px={{ base: 4, md: 10 }} py={6}>
-      Empty
+      Redirecting...
     </Box>
   );
 };
