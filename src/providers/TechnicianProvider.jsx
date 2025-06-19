@@ -1,11 +1,12 @@
 // src/providers/TechnicianProvider.jsx
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { collection, getDocs, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { useDebounce } from '../hooks/useDebounce'
 import { useAuth } from './AuthProvider'
 import { getDistance } from 'geolib'
+import { toaster } from '../components/ui/toaster'
 
 const TechnicianContext = createContext()
 
@@ -80,6 +81,66 @@ export const TechnicianProvider = ({ children }) => {
         return isNotUser && searchMatch && serviceFilterMatch;
     });
 
+    const sendServiceRequest = async ({
+  technicianId,
+  technicianName,
+  technicianPhotoUrl,
+  description,
+  emmergency,
+  scheduledDate = null,
+}) => {
+  if (!userData) {
+    toaster({
+      title: 'Not logged in',
+      description: 'You need to be logged in to send a request.',
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    });
+    return;
+  }
+
+  setLoading(true)
+
+  try {
+    const requestData = {
+      clientId: userData.id,
+      clientName: userData.fullName,
+      clientPhotoUrl: userData.photoUrl ?? '',
+      technicianId,
+      technicianName,
+      technicianPhotoUrl,
+      description,
+      emmergency,
+      scheduledDate,
+      status: 'pending',
+      requestedAt: serverTimestamp(),
+    };
+
+    const requestRef = collection(db, 'requests');
+    await addDoc(requestRef, requestData);
+
+    toaster({
+      title: 'Request sent',
+      description: 'Your service request was sent successfully.',
+      status: 'success',
+      duration: 4000,
+      isClosable: true,
+    });
+  } catch (error) {
+    console.error('Failed to send request:', error);
+    toaster({
+      title: 'Error',
+      description: 'Failed to send your request. Please try again later.',
+      status: 'error',
+      duration: 2000,
+      isClosable: true,
+    });
+  } finally {
+    setLoading(false)
+  }
+}
+
 
     return (
         <TechnicianContext.Provider
@@ -95,6 +156,7 @@ export const TechnicianProvider = ({ children }) => {
                 searchRadius,
                 setSearchRadius,
                 filteredTechnicians,
+                sendServiceRequest,
             }}
         >
             {children}

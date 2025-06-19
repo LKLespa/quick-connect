@@ -176,6 +176,7 @@ export const AuthProvider = ({ children }) => {
         const userRef = doc(db, "users", userData.id);
 
         await updateDoc(userRef, {
+            technicianId: userData.technicianId ?? uuidv4(),
             technicianProfile: {
                 region,
                 city,
@@ -187,7 +188,7 @@ export const AuthProvider = ({ children }) => {
                 availability,
                 updatedAt: serverTimestamp(),
                 rating: 0,
-                revuews: [],
+                reviews: [],
             }
         });
 

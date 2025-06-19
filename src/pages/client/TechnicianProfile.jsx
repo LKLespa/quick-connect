@@ -22,11 +22,14 @@ import { Link, useParams } from 'react-router'
 import { db } from '../../firebase/config'
 import { renderStars } from '../../utils/rating'
 import { routeLinks } from '../../routes'
+import DialogWidget from '../../components/widgets/DialogWidget'
+import RequestForm from './RequestForm'
 
 export default function TechnicianProfile() {
     const { technicianId } = useParams()
     const [technician, setTechnician] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [openRequest, setOpenRequest] = useState(false)
     const [error, setError] = useState(null)
 
     useEffect(() => {
@@ -157,6 +160,10 @@ export default function TechnicianProfile() {
 
                 <Separator />
 
+                <DialogWidget open={openRequest} setOpen={setOpenRequest} title='New Request'>
+                    <RequestForm technician={technician}/>
+                </DialogWidget>
+
                 <HStack spacing={4} w="full" justify="start">
                     <Button
                         leftIcon={<BiPhoneCall />}
@@ -172,7 +179,7 @@ export default function TechnicianProfile() {
                     <Button
                         colorScheme="green"
                         size="lg"
-                        onClick={() => alert('Request service clicked!')}
+                        onClick={() => setOpenRequest(true)}
                     >
                         Request Service
                     </Button>
