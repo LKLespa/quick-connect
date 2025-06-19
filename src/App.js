@@ -6,6 +6,7 @@ import { AuthProvider } from "./providers/AuthProvider";
 import { Toaster } from "./components/ui/toaster";
 import { TechnicianProvider } from "./providers/TechnicianProvider";
 import 'leaflet/dist/leaflet.css';
+import { ClientProvider } from "./providers/ClientProvider";
 
 function App() {
   return (
@@ -13,7 +14,9 @@ function App() {
       <Box colorPalette='brand'>
         <AuthProvider>
           <TechnicianProvider>
-            <RouterProvider router={router} />
+            <ClientProvider>
+              <RouterProvider router={router} />
+            </ClientProvider>
           </TechnicianProvider>
         </AuthProvider>
         <Toaster />

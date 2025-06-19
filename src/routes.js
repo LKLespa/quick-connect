@@ -1,13 +1,8 @@
 import { createBrowserRouter } from "react-router";
 import { HomePage, NotFound, SettingsPage, SignInForm, SignUpForm } from "./pages";
-import ProfilePage from "./pages/technician/TechnicianProfilePage";
 import TechnicianSetup from "./pages/auth/TechnicianSetup";
 import TechnicianDashBoard from "./pages/technician/DashBoard";
 import MyJobs from "./pages/technician/MyJobs";
-import TechnicianMessages from "./pages/technician/Messages";
-import Earnings from "./pages/technician/Earnings";
-import TechnicianSettingsPage from "./pages/technician/SettingsPage";
-import JobDetails from "./pages/technician/JobDetails";
 import ClientDashboard from "./pages/client/DashBoard";
 import TechProfile from "./pages/client/ClientProfile";
 import Technicians from "./pages/client/Technicians";
@@ -19,12 +14,16 @@ import ClientRequest from "./pages/client/JobRequest";
 import ChatRoom from "./pages/shared/ChatRoom";
 import ClientProfile from "./pages/client/ClientProfile";
 import TechnicianProfile from "./pages/client/TechnicianProfile";
+import TechnicianHeader from "./pages/technician/Header";
+import ClientRequests from "./pages/client/JobRequest";
+import ClientsPage from "./pages/technician/Clients";
+import ClientProfileForTechnician from "./pages/technician/ClientProfile";
+import TechnicianProfilePage from "./pages/technician/ProfilePage";
 
 const routeLinks = {
     signUp: '/signup',
     signIn: '/signIn',
     setup: '/setup',
-    techHome: '/technician',
     clientHome: '/client',
     clientRequest: '/client/requests',
     clientHistory: '/client/history',
@@ -32,6 +31,13 @@ const routeLinks = {
     clientProfile: '/client/profile',
     clientChats: '/client/chats',
     clientSettings: '/client/settings',
+    techHome: '/technician',
+    techRequest: '/technician/request',
+    techHistory: '/technician',
+    clients: '/technician/clients',
+    techChats: '/technician/chats',
+    techProfile: '/technician/profile',
+    techJobs: '/technician/my-jobs',
     dashboard: '/dashboard',
 }
 
@@ -62,30 +68,39 @@ const router = createBrowserRouter([
     },
     {
         path: '/technician',
+        Component: TechnicianHeader,
         children: [
             {
                 path: '',
                 Component: TechnicianDashBoard,
             },
             {
-                path: 'myJobs',
+                path: 'request',
+                Component: ClientRequests,
+            },
+            {
+                path: 'my-jobs',
                 Component: MyJobs,
             },
             {
-                path: 'job-details',
-                Component: JobDetails,
+                path: 'chats',
+                Component: AllChats,
             },
             {
-                path: 'messages',
-                Component: TechnicianMessages,
+                path: 'chats/:clientId',
+                Component: ChatRoom,
             },
             {
-                path: 'earnings',
-                Component: Earnings,
+                path: 'profile',
+                Component: TechnicianProfilePage,
             },
             {
-                path: 'settings',
-                Component: TechnicianSettingsPage,
+                path: 'clients',
+                Component: ClientsPage,
+            },
+            {
+                path: 'clients/:clientId',
+                Component: ClientProfileForTechnician,
             }
         ]
     },

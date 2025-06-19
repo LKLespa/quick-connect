@@ -48,9 +48,7 @@ export const TechnicianProvider = ({ children }) => {
         const query = debouncedSearch.toLowerCase();
         const profile = tech.technicianProfile || {};
 
-        console.log('IDS', tech.fullName, userData.id == (tech?.id ?? ''))
-
-        const isNotUser = userData.id != (tech?.id ?? '');
+        const isNotUser = userData?.id != (tech?.id ?? '');
         const nameMatch = tech.fullName?.toLowerCase().includes(query);
         const mainServiceMatch = profile.mainService?.toLowerCase().includes(query);
         const otherServicesMatch = (profile.services || []).some(service =>
